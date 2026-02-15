@@ -3,20 +3,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 
-// Fetch from SonicJs instead of local files
 const apiUrl = "https://my-sonicjs-app.going2timbuktu.workers.dev/api/content/posts?status=published";
-const response = await fetch(apiUrl);
-const { data: rawPosts } = await response.json();
+let posts = [];
 
-// Map SonicJs data with explicit types to satisfy TypeScript
-const posts = rawPosts.map((post: any) => ({
-  slug: post.slug,
-  data: {
-    title: post.title,
-    date: new Date(post.publishedAt || post.createdAt),
-    teaser: post.excerpt || post.teaser,
-  }
-})).sort((a: any, b: any) => b.data.date.valueOf() - a.data.date.valueOf());
+try {
+  const response = await fetch(apiUrl);
+  const result = await response.json();
+  
+  // Safely handle the case where data is missing or an error is returned
+  const rawPosts = Array.isArray(result.data) ? result.data : [];
+
+  posts = rawPosts.map((post: any) => ({
+    slug: post.slug,
+    data: {
+      title: post.title,
+      date: new Date(post.publishedAt || post.createdAt || Date.now()),
+      teaser: post.excerpt || post.teaser || '',
+    }
+  })).sort((a: any, b: any) => b.data.date.valueOf() - a.data.date.valueOf());
+} catch (e) {
+  console.error("Failed to fetch posts:", e);
+}
 
 const latestPost = posts[0];
 ---
@@ -24,58 +31,22 @@ const latestPost = posts[0];
 <BaseLayout>
   <Navigation slot="navigation" />
   
-  <div id="header-home">
-    <div class="row">
-      <div class="small-12 columns">
-        <h1>Virtually an Admin</h1>
-        <p class="subheadline">Thoughts on Administrating in the Clouds</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="row t30 b20 homepage">
-    <div class="small-12 columns">
-      {latestPost && (
-        <article>
-          <h2>
-            <a href={`/blog/${latestPost.slug}/`}>{latestPost.data.title}</a>
-          </h2>
-          {latestPost.data.teaser && (
-            <p class="teaser">{latestPost.data.teaser}</p>
-          )}
-          <p class="subheadline">
-            <time datetime={latestPost.data.date.toISOString()}>
-              {latestPost.data.date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </time>
-          </p>
-          <a href={`/blog/${latestPost.slug}/`} class="button tiny radius">Read More</a>
-        </article>
-      )}
-    </div>
-  </div>
+  <!-- ... rest of your HTML ... -->
 
   <div class="row t30">
     <div class="small-12 columns">
       <h3>Recent Posts</h3>
-      <ul>
-        {posts.slice(0, 10).map((post: any) => (
-          <li>
-            <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
-            <span class="subheadline">
-              {' - '}
-              {post.data.date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
-              })}
-            </span>
-          </li>
-        ))}
-      </ul>
+      {posts.length > 0 ? (
+        <ul>
+          {posts.slice(0, 10).map((post: any) => (
+            <li>
+              <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No posts found. Time to run the migration script!</p>
+      )}
     </div>
   </div>
 
