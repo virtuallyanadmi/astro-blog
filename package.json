@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
-    "deploy": "CLOUDFLARE_ACCOUNT_ID=0ad226070db45ae33b6177b9428f14c9 wrangler pages deploy ./dist --project-name=astro-blog",
+    "deploy": "CLOUDFLARE_ACCOUNT_ID=0ad226070db45ae33b6177b9428f14c9 wrangler pages deploy ./dist --project-name=vaa-blog",
     "preview": "astro preview",
     "astro": "astro",
     "upload-to-r2": "tsx scripts/upload-to-r2.ts"
