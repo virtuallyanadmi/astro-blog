@@ -1,3 +1,7 @@
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navigation from '../../components/Navigation.astro';
+import Footer from '../../components/Footer.astro';
+import { getImageUrl } from '../../lib/cdn';
 ---
 export async function getStaticPaths() {
   const apiUrl = "https://my-sonicjs-app.going2timbuktu.workers.dev/api/content/posts?status=published";
@@ -14,13 +18,14 @@ const { post } = Astro.props;
 
 // Map SonicJs fields to your existing schema
 const postData = {
-  title: post.title,
-  teaser: post.excerpt || post.teaser,
-  subheadline: post.subheadline,
-  date: new Date(post.publishedAt || post.createdAt),
-  author: post.author?.name || 'jonathan',
+  title: post.title ?? '',
+  teaser: post.excerpt ?? post.teaser ?? '',
+  subheadline: post.subheadline ?? '',
+  date: new Date(post.publishedAt ?? post.createdAt ?? Date.now()),
+  author: post.author?.name ?? 'jonathan',
   image: post.featuredImage ? { title: post.featuredImage } : null,
-  content: post.content // This is the HTML from SonicJs
+  content: post.content ?? '',
+  tags: post.tags ?? [],
 };
 ---
 
@@ -72,9 +77,9 @@ const postData = {
         {/* Use set:html to render the content from SonicJs */}
         <div class="content" set:html={postData.content} />
         
-        {post.tags && post.tags.length > 0 && (
+        {postData.tags.length > 0 && (
           <div class="tags">
-            <strong>Tags:</strong> {post.tags.join(', ')}
+            <strong>Tags:</strong> {postData.tags.join(', ')}
           </div>
         )}
       </article>
