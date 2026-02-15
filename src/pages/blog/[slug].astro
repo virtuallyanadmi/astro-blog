@@ -6,13 +6,28 @@ import { getImageUrl } from '../../lib/cdn';
 
 export async function getStaticPaths() {
   const apiUrl = "https://my-sonicjs-app.going2timbuktu.workers.dev/api/content/posts?status=published";
-  const response = await fetch(apiUrl);
-  const { data: posts } = await response.json();
   
-  return posts.map((post: any) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  try {
+    const response = await fetch(apiUrl);
+    const result = await response.json();
+    
+    // SonicJs usually returns { data: [...] }
+    // We check if result.data exists and is an array
+    const posts = Array.isArray(result.data) ? result.data : [];
+    
+    if (posts.length === 0) {
+      console.warn("No posts found from SonicJs API:", result);
+      return [];
+    }
+
+    return posts.map((post: any) => ({
+      params: { slug: post.slug },
+      props: { post },
+    }));
+  } catch (error) {
+    console.error("Error fetching posts from SonicJs:", error);
+    return [];
+  }
 }
 
 const { post } = Astro.props as { post: any };
