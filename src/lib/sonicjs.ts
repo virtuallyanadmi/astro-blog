@@ -77,7 +77,7 @@ class SonicJSClient {
 }
 
 export const sonicjs = new SonicJSClient({
-  apiUrl: import.meta.env.SONICJS_API_URL || '',
+  apiUrl: import.meta.env.SONICJS_API_URL || 'https://my-sonicjs-app.going2timbuktu.workers.dev',
   apiKey: import.meta.env.SONICJS_API_KEY,
 });
 
