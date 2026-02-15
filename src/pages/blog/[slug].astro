@@ -1,0 +1,80 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navigation from '../../components/Navigation.astro';
+import Footer from '../../components/Footer.astro';
+import { getImageUrl } from '../../lib/cdn';
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<BaseLayout title={post.data.title} description={post.data.teaser}>
+  <Navigation slot="navigation" />
+  
+  <div class="row t30">
+    <div class="medium-8 columns medium-offset-2 end">
+      <article itemscope itemtype="http://schema.org/Article">
+        <header>
+          {post.data.image?.title && (
+            <figure>
+              <img src={getImageUrl(post.data.image.title)} width="970" alt={post.data.title} itemprop="image" />
+              {post.data.image.caption && (
+                <figcaption class="text-right">
+                  {post.data.image.caption_url ? (
+                    <a href={post.data.image.caption_url}>{post.data.image.caption}</a>
+                  ) : (
+                    post.data.image.caption
+                  )}
+                </figcaption>
+              )}
+            </figure>
+          )}
+          
+          <span itemprop="name">
+            {post.data.subheadline && <p class="subheadline">{post.data.subheadline}</p>}
+            <h1>{post.data.title}</h1>
+          </span>
+          
+          <p class="meta-info">
+            <time datetime={post.data.date.toISOString()}>
+              {post.data.date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </time>
+            {post.data.author && ` by ${post.data.author}`}
+          </p>
+        </header>
+
+        {post.data.teaser && (
+          <p class="teaser" itemprop="description">
+            {post.data.teaser}
+          </p>
+        )}
+
+        <span itemprop="articleSection">
+          <Content />
+        </span>
+        
+        {post.data.tags && post.data.tags.length > 0 && (
+          <div class="tags">
+            <strong>Tags:</strong> {post.data.tags.join(', ')}
+          </div>
+        )}
+      </article>
+    </div>
+  </div>
+
+  <Footer slot="footer" />
+</BaseLayout>

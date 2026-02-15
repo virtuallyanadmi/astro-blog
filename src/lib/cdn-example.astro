@@ -1,0 +1,37 @@
+---
+// Example: Using CDN helpers in your Astro components
+import { getImageUrl, getAssetUrl } from '../lib/cdn';
+
+// For images in the /images directory
+const logoUrl = getImageUrl('logo.png');
+const avatarUrl = getImageUrl('avatar.jpg');
+
+// For other assets
+const cssUrl = getAssetUrl('assets/css/styles.css');
+const jsUrl = getAssetUrl('assets/js/script.js');
+
+// For blog post images from frontmatter
+interface Props {
+  image?: {
+    title?: string;
+    thumb?: string;
+  };
+}
+
+const { image } = Astro.props;
+const postImageUrl = image?.title ? getImageUrl(image.title) : null;
+---
+
+<!-- Usage in templates -->
+<img src={logoUrl} alt="Site Logo" />
+<img src={avatarUrl} alt="Avatar" />
+
+{postImageUrl && (
+  <img src={postImageUrl} alt="Post Image" />
+)}
+
+<!-- 
+  Note: When PUBLIC_CDN_URL is not set in .env, 
+  these functions will return the original paths.
+  This allows you to develop locally without R2.
+-->

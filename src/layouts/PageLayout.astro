@@ -1,0 +1,58 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { getImageUrl } from '../lib/cdn';
+
+interface Props {
+  title: string;
+  description?: string;
+  subheadline?: string;
+  teaser?: string;
+  image?: {
+    title?: string;
+    caption?: string;
+    caption_url?: string;
+  };
+}
+
+const { title, description, subheadline, teaser, image } = Astro.props;
+---
+
+<BaseLayout title={title} description={description || teaser}>
+  <div class="row t30">
+    <div class="medium-8 columns medium-offset-2 end">
+      <article itemscope itemtype="http://schema.org/Article">
+        <header>
+          {image?.title && (
+            <figure>
+              <img src={getImageUrl(image.title)} width="970" alt={title} itemprop="image" />
+              {image.caption && (
+                <figcaption class="text-right">
+                  {image.caption_url ? (
+                    <a href={image.caption_url}>{image.caption}</a>
+                  ) : (
+                    image.caption
+                  )}
+                </figcaption>
+              )}
+            </figure>
+          )}
+          
+          <span itemprop="name">
+            {subheadline && <p class="subheadline">{subheadline}</p>}
+            <h1>{title}</h1>
+          </span>
+        </header>
+
+        {teaser && (
+          <p class="teaser" itemprop="description">
+            {teaser}
+          </p>
+        )}
+
+        <span itemprop="articleSection">
+          <slot />
+        </span>
+      </article>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const latestPost = posts[0];
+---
+
+<BaseLayout>
+  <Navigation slot="navigation" />
+  
+  <div id="header-home">
+    <div class="row">
+      <div class="small-12 columns">
+        <h1>Virtually an Admin</h1>
+        <p class="subheadline">Thoughts on Administrating in the Clouds</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row t30 b20 homepage">
+    <div class="small-12 columns">
+      {latestPost && (
+        <article>
+          <h2>
+            <a href={`/blog/${latestPost.slug}/`}>{latestPost.data.title}</a>
+          </h2>
+          {latestPost.data.teaser && (
+            <p class="teaser">{latestPost.data.teaser}</p>
+          )}
+          <p class="subheadline">
+            <time datetime={latestPost.data.date.toISOString()}>
+              {latestPost.data.date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </time>
+          </p>
+          <a href={`/blog/${latestPost.slug}/`} class="button tiny radius">Read More</a>
+        </article>
+      )}
+    </div>
+  </div>
+
+  <div class="row t30">
+    <div class="small-12 columns">
+      <h3>Recent Posts</h3>
+      <ul>
+        {posts.slice(0, 10).map((post) => (
+          <li>
+            <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+            <span class="subheadline">
+              {' - '}
+              {post.data.date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+              })}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <Footer slot="footer" />
+</BaseLayout>

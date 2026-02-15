@@ -1,0 +1,47 @@
+---
+import { getImageUrl, getAssetUrl } from '../lib/cdn';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+
+const siteTitle = "Virtually an Admin";
+const siteDescription = "This is the blog of Jonathan Stewart.";
+const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
+const pageDescription = description || siteDescription;
+const pageImage = image || getImageUrl('logo.png');
+---
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription} />
+  
+  <link rel="stylesheet" type="text/css" href={getAssetUrl('assets/css/styles_feeling_responsive.css')} />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Volkhov&display=swap" rel="stylesheet">
+  
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={pageDescription} />
+  <meta property="og:url" content={Astro.url} />
+  <meta property="og:site_name" content={siteTitle} />
+  <meta property="og:image" content={pageImage} />
+</head>
+<body id="top-of-page">
+  <slot name="navigation" />
+  <slot name="masthead" />
+  <slot />
+  <slot name="footer" />
+</body>
+</html>

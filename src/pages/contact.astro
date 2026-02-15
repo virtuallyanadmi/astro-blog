@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Contact" description="Get in touch with me? Use this contact form.">
+  <Navigation slot="navigation" />
+  
+  <div class="row t30">
+    <div class="small-12 columns">
+      <h1>Contact</h1>
+      <p class="teaser">Get in touch with me? Use this contact form.</p>
+      
+      <div>
+        <iframe width="640px" height="587px" frameborder="0" scrolling="no" src="https://virtuallyanadmi.wufoo.com/forms/contact-me/"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <Footer slot="footer" />
+</BaseLayout>

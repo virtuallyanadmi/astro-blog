@@ -1,0 +1,61 @@
+---
+const navItems = [
+  { title: 'Home', url: '/', side: 'left' },
+  { 
+    title: 'Blog', 
+    url: '/blog/', 
+    side: 'left',
+    dropdown: [
+      { title: 'Blog Archive', url: '/blog/archive/' }
+    ]
+  },
+  { title: 'About Me', url: '/about/', side: 'left' },
+  { title: 'My Story', url: '/info/', side: 'left' },
+  { title: 'Search', url: '/search/', side: 'right' },
+  { title: 'Contact', url: '/contact/', side: 'right' },
+];
+
+const leftNav = navItems.filter(item => item.side === 'left');
+const rightNav = navItems.filter(item => item.side === 'right');
+---
+
+<div id="navigation" class="sticky">
+  <nav class="top-bar" role="navigation" data-topbar>
+    <ul class="title-area">
+      <li class="name">
+        <h1 class="show-for-small-only">
+          <a href="/" class="icon-tree">Virtually an Admin</a>
+        </h1>
+      </li>
+      <li class="toggle-topbar menu-icon"><a href="#"><span>Navigation</span></a></li>
+    </ul>
+    
+    <section class="top-bar-section">
+      <ul class="left">
+        {leftNav.map((link) => (
+          link.dropdown ? (
+            <li class="has-dropdown">
+              <a href={link.url}>{link.title}</a>
+              <ul class="dropdown">
+                {link.dropdown.map((dropdownLink) => (
+                  <li><a href={dropdownLink.url}>{dropdownLink.title}</a></li>
+                ))}
+              </ul>
+            </li>
+          ) : (
+            <li><a href={link.url}>{link.title}</a></li>
+          )
+        ))}
+      </ul>
+      
+      <ul class="right">
+        {rightNav.map((link) => (
+          <>
+            <li class="divider"></li>
+            <li><a href={link.url}>{link.title}</a></li>
+          </>
+        ))}
+      </ul>
+    </section>
+  </nav>
+</div>

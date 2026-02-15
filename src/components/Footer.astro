@@ -1,0 +1,65 @@
+---
+const services = [
+  { name: 'About', url: '/about/' },
+  { name: 'Contact', url: '/contact/' },
+];
+
+const network = [
+  { name: 'Twitter', url: 'https://twitter.com/virtuallyanadmi' },
+  { name: 'GitHub', url: 'https://github.com/' },
+];
+---
+
+<div id="up-to-top" class="row">
+  <div class="small-12 columns" style="text-align: right;">
+    <a class="iconfont" href="#top-of-page">&#xf108;</a>
+  </div>
+</div>
+
+<footer id="footer-content" class="bg-grau">
+  <div id="footer">
+    <div class="row">
+      <div class="medium-6 large-5 columns">
+        <h5 class="shadow-black">About This Site</h5>
+        <p class="shadow-black">
+          This is the blog of Jonathan Stewart.
+          <a href="/info/">More</a>
+        </p>
+      </div>
+
+      <div class="small-6 medium-3 large-3 large-offset-1 columns">
+        <h5 class="shadow-black">Services</h5>
+        <ul class="no-bullet shadow-black">
+          {services.map((item) => (
+            <li><a href={item.url} title={item.name}>{item.name}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="small-6 medium-3 large-3 columns">
+        <h5 class="shadow-black">Network</h5>
+        <ul class="no-bullet shadow-black">
+          {network.map((item) => (
+            <li>
+              <a href={item.url} target="_blank" title={item.name}>{item.name}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="subfooter">
+    <nav class="row">
+      <section id="subfooter-left" class="small-12 medium-6 columns credits">
+        <p>© {new Date().getFullYear()} Jonathan Stewart</p>
+      </section>
+
+      <section id="subfooter-right" class="small-12 medium-6 columns">
+        <ul class="inline-list social-icons">
+          <li><a href="https://twitter.com/virtuallyanadmi" target="_blank" class="icon-twitter" title="Twitter"></a></li>
+        </ul>
+      </section>
+    </nav>
+  </div>
+</footer>
