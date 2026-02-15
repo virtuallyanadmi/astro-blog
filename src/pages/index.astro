@@ -2,11 +2,21 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
-import { getCollection } from 'astro:content';
 
-const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
+// Fetch from SonicJs instead of local files
+const apiUrl = "https://my-sonicjs-app.going2timbuktu.workers.dev/api/content/posts?status=published";
+const response = await fetch(apiUrl);
+const { data: rawPosts } = await response.json();
+
+// Map SonicJs data to match your existing component expectations
+const posts = rawPosts.map(post => ({
+  slug: post.slug,
+  data: {
+    title: post.title,
+    date: new Date(post.publishedAt || post.createdAt),
+    teaser: post.excerpt || post.teaser,
+  }
+})).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const latestPost = posts[0];
 ---

@@ -1,39 +1,45 @@
 ---
-import { getCollection } from 'astro:content';
-import type { GetStaticPaths } from 'astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Navigation from '../../components/Navigation.astro';
-import Footer from '../../components/Footer.astro';
-import { getImageUrl } from '../../lib/cdn';
-
-export const getStaticPaths = (async () => {
-  const posts = await getCollection('blog');
+export async function getStaticPaths() {
+  const apiUrl = "https://my-sonicjs-app.going2timbuktu.workers.dev/api/content/posts?status=published";
+  const response = await fetch(apiUrl);
+  const { data: posts } = await response.json();
+  
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },
   }));
-}) satisfies GetStaticPaths;
+}
 
 const { post } = Astro.props;
-const { Content } = await post.render();
+
+// Map SonicJs fields to your existing schema
+const postData = {
+  title: post.title,
+  teaser: post.excerpt || post.teaser,
+  subheadline: post.subheadline,
+  date: new Date(post.publishedAt || post.createdAt),
+  author: post.author?.name || 'jonathan',
+  image: post.featuredImage ? { title: post.featuredImage } : null,
+  content: post.content // This is the HTML from SonicJs
+};
 ---
 
-<BaseLayout title={post.data.title} description={post.data.teaser}>
+<BaseLayout title={postData.title} description={postData.teaser}>
   <Navigation slot="navigation" />
   
   <div class="row t30">
     <div class="medium-8 columns medium-offset-2 end">
       <article itemscope itemtype="http://schema.org/Article">
         <header>
-          {post.data.image?.title && (
+          {postData.image?.title && (
             <figure>
-              <img src={getImageUrl(post.data.image.title)} width="970" alt={post.data.title} itemprop="image" />
-              {post.data.image.caption && (
+              <img src={getImageUrl(postData.image.title)} width="970" alt={postData.title} itemprop="image" />
+              {postData.image.caption && (
                 <figcaption class="text-right">
-                  {post.data.image.caption_url ? (
-                    <a href={post.data.image.caption_url}>{post.data.image.caption}</a>
+                  {postData.image.caption_url ? (
+                    <a href={postData.image.caption_url}>{postData.image.caption}</a>
                   ) : (
-                    post.data.image.caption
+                    postData.image.caption
                   )}
                 </figcaption>
               )}
@@ -41,35 +47,34 @@ const { Content } = await post.render();
           )}
           
           <span itemprop="name">
-            {post.data.subheadline && <p class="subheadline">{post.data.subheadline}</p>}
-            <h1>{post.data.title}</h1>
+            {postData.subheadline && <p class="subheadline">{postData.subheadline}</p>}
+            <h1>{postData.title}</h1>
           </span>
           
           <p class="meta-info">
-            <time datetime={post.data.date.toISOString()}>
-              {post.data.date.toLocaleDateString('en-US', { 
+            <time datetime={postData.date.toISOString()}>
+              {postData.date.toLocaleDateString('en-US', { 
                 year: 'numeric', 
                 month: 'long', 
                 day: 'numeric' 
               })}
             </time>
-            {post.data.author && ` by ${post.data.author}`}
+            {postData.author && ` by ${postData.author}`}
           </p>
         </header>
 
-        {post.data.teaser && (
+        {postData.teaser && (
           <p class="teaser" itemprop="description">
-            {post.data.teaser}
+            {postData.teaser}
           </p>
         )}
 
-        <span itemprop="articleSection">
-          <Content />
-        </span>
+        {/* Use set:html to render the content from SonicJs */}
+        <div class="content" set:html={postData.content} />
         
-        {post.data.tags && post.data.tags.length > 0 && (
+        {post.tags && post.tags.length > 0 && (
           <div class="tags">
-            <strong>Tags:</strong> {post.data.tags.join(', ')}
+            <strong>Tags:</strong> {post.tags.join(', ')}
           </div>
         )}
       </article>
