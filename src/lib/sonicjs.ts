@@ -48,29 +48,29 @@ class SonicJSClient {
   }
 
   async getPosts(): Promise<SonicJSPost[]> {
-    return this.fetch('/api/posts');
+    return this.fetch('/api/blog_posts');
   }
 
   async getPost(slug: string): Promise<SonicJSPost> {
-    return this.fetch(`/api/posts/${slug}`);
+    return this.fetch(`/api/blog_posts/${slug}`);
   }
 
   async createPost(post: Omit<SonicJSPost, 'id'>): Promise<SonicJSPost> {
-    return this.fetch('/api/posts', {
+    return this.fetch('/api/blog_posts', {
       method: 'POST',
       body: JSON.stringify(post),
     });
   }
 
   async updatePost(id: string, post: Partial<SonicJSPost>): Promise<SonicJSPost> {
-    return this.fetch(`/api/posts/${id}`, {
+    return this.fetch(`/api/blog_posts/${id}`, {
       method: 'PUT',
       body: JSON.stringify(post),
     });
   }
 
   async deletePost(id: string): Promise<void> {
-    return this.fetch(`/api/posts/${id}`, {
+    return this.fetch(`/api/blog_posts/${id}`, {
       method: 'DELETE',
     });
   }
