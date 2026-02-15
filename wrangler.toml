@@ -1,13 +1,7 @@
 name = "astro-blog"
 compatibility_date = "2024-01-01"
+pages_build_output_dir = "./dist"
 
-[site]
-bucket = "./dist"
-
-[[env_vars]]
-name = "PUBLIC_CDN_URL"
-value = "https://cdn.virtuallyanadmin.com"
-
-[[env_vars]]
-name = "SONICJS_API_URL"
-value = "https://my-sonicjs-app.going2timbuktu.workers.dev"
+[vars]
+PUBLIC_CDN_URL = "https://cdn.virtuallyanadmin.com"
+SONICJS_API_URL = "https://my-sonicjs-app.going2timbuktu.workers.dev"
