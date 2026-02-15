@@ -8,8 +8,8 @@ const apiUrl = "https://my-sonicjs-app.going2timbuktu.workers.dev/api/content/po
 const response = await fetch(apiUrl);
 const { data: rawPosts } = await response.json();
 
-// Map SonicJs data to match your existing component expectations
-const posts: { slug: string; data: { title: string; date: Date; teaser?: string } }[] = rawPosts.map((post: any) => ({
+// Map SonicJs data with explicit types to satisfy TypeScript
+const posts = rawPosts.map((post: any) => ({
   slug: post.slug,
   data: {
     title: post.title,
@@ -62,7 +62,7 @@ const latestPost = posts[0];
     <div class="small-12 columns">
       <h3>Recent Posts</h3>
       <ul>
-        {posts.slice(0, 10).map((post) => (
+        {posts.slice(0, 10).map((post: any) => (
           <li>
             <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
             <span class="subheadline">

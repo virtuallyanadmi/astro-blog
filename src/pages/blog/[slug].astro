@@ -1,31 +1,32 @@
+---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import { getImageUrl } from '../../lib/cdn';
----
+
 export async function getStaticPaths() {
   const apiUrl = "https://my-sonicjs-app.going2timbuktu.workers.dev/api/content/posts?status=published";
   const response = await fetch(apiUrl);
   const { data: posts } = await response.json();
   
-  return posts.map((post) => ({
+  return posts.map((post: any) => ({
     params: { slug: post.slug },
     props: { post },
   }));
 }
 
-const { post } = Astro.props;
+const { post } = Astro.props as { post: any };
 
-// Map SonicJs fields to your existing schema
+// Map SonicJs fields to your existing schema with safe fallbacks
 const postData = {
-  title: post.title ?? '',
-  teaser: post.excerpt ?? post.teaser ?? '',
-  subheadline: post.subheadline ?? '',
-  date: new Date(post.publishedAt ?? post.createdAt ?? Date.now()),
-  author: post.author?.name ?? 'jonathan',
+  title: post.title || '',
+  teaser: post.excerpt || post.teaser || '',
+  subheadline: post.subheadline || '',
+  date: new Date(post.publishedAt || post.createdAt || Date.now()),
+  author: post.author?.name || 'jonathan',
   image: post.featuredImage ? { title: post.featuredImage } : null,
-  content: post.content ?? '',
-  tags: post.tags ?? [],
+  content: post.content || '',
+  tags: post.tags || []
 };
 ---
 
@@ -39,15 +40,6 @@ const postData = {
           {postData.image?.title && (
             <figure>
               <img src={getImageUrl(postData.image.title)} width="970" alt={postData.title} itemprop="image" />
-              {postData.image.caption && (
-                <figcaption class="text-right">
-                  {postData.image.caption_url ? (
-                    <a href={postData.image.caption_url}>{postData.image.caption}</a>
-                  ) : (
-                    postData.image.caption
-                  )}
-                </figcaption>
-              )}
             </figure>
           )}
           
@@ -74,8 +66,7 @@ const postData = {
           </p>
         )}
 
-        {/* Use set:html to render the content from SonicJs */}
-        <div class="content" set:html={postData.content} />
+        <div class="content" itemprop="articleSection" set:html={postData.content} />
         
         {postData.tags.length > 0 && (
           <div class="tags">
